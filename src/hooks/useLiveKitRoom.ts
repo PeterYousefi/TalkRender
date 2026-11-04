@@ -50,7 +50,7 @@ export function useLiveKitRoom(options: UseLiveKitRoomOptions = {}) {
         options.onError?.(error);
       }
     },
-    [options]
+    [options, manager]
   );
 
   const disconnect = useCallback(async () => {
