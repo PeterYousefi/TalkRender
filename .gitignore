@@ -30,6 +30,7 @@ pnpm-debug.log*
 # Testing & Coverage
 coverage/
 .nyc_output/
+*.tsbuildinfo
 
 # System and IDE files
 .DS_Store
