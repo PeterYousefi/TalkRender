@@ -10,7 +10,6 @@ import {
   RemoteTrack,
   RemoteTrackPublication,
   RemoteParticipant,
-  ConnectionState,
 } from 'livekit-client';
 import type { LiveKitConnectionStatus, LiveKitRoomState } from '@/types/livekit';
 
@@ -20,11 +19,13 @@ export type LiveKitTrackCallback = (
   participant: RemoteParticipant
 ) => void;
 
+export type LiveKitGenericHandler<T = any> = (arg: T) => void;
+
 export class LiveKitConnectionManager {
   private room: Room;
   private currentStatus: LiveKitConnectionStatus = 'disconnected';
   private avatarTrack: RemoteTrack | null = null;
-  private eventListeners: Map<string, Set<Function>> = new Map();
+  private eventListeners: Map<string, Set<LiveKitGenericHandler>> = new Map();
 
   constructor() {
     this.room = new Room({
@@ -62,13 +63,13 @@ export class LiveKitConnectionManager {
     };
   }
 
-  public on(event: string, handler: Function): () => void {
+  public on<T = any>(event: string, handler: LiveKitGenericHandler<T>): () => void {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
-    this.eventListeners.get(event)!.add(handler);
+    this.eventListeners.get(event)!.add(handler as LiveKitGenericHandler);
     return () => {
-      this.eventListeners.get(event)?.delete(handler);
+      this.eventListeners.get(event)?.delete(handler as LiveKitGenericHandler);
     };
   }
 
@@ -77,7 +78,7 @@ export class LiveKitConnectionManager {
     if (handlers) {
       handlers.forEach((h) => {
         try {
-          h(...args);
+          h(args[0]);
         } catch (err) {
           console.error(`LiveKit manager listener error on [${event}]:`, err);
         }
