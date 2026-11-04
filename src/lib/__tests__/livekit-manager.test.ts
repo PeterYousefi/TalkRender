@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { LiveKitConnectionManager } from '../livekit-manager';
-import { RoomEvent, Track } from 'livekit-client';
+import { RoomEvent, Track, RemoteTrack, RemoteTrackPublication, RemoteParticipant } from 'livekit-client';
 
 describe('LiveKitConnectionManager', () => {
   let manager: LiveKitConnectionManager;
@@ -36,22 +36,22 @@ describe('LiveKitConnectionManager', () => {
     const room = manager.getRoom();
     let detectedAvatar: unknown = null;
 
-    manager.on('avatarTrackReady', (track) => {
+    manager.on('avatarTrackReady', (track: unknown) => {
       detectedAvatar = track;
     });
 
     const mockVideoTrack = {
       kind: Track.Kind.Video,
       sid: 'track-avatar-video-1',
-    };
+    } as unknown as RemoteTrack;
 
     const mockPublication = {
       trackSid: 'track-avatar-video-1',
-    };
+    } as unknown as RemoteTrackPublication;
 
     const mockAvatarParticipant = {
       identity: 'higgs-avatar-copilot',
-    };
+    } as unknown as RemoteParticipant;
 
     room.emit(
       RoomEvent.TrackSubscribed,
@@ -70,9 +70,9 @@ describe('LiveKitConnectionManager', () => {
     const mockVideoTrack = {
       kind: Track.Kind.Video,
       sid: 'track-avatar-video-1',
-    };
-    const mockPublication = { trackSid: 'track-avatar-video-1' };
-    const mockAvatarParticipant = { identity: 'boson-avatar-host' };
+    } as unknown as RemoteTrack;
+    const mockPublication = { trackSid: 'track-avatar-video-1' } as unknown as RemoteTrackPublication;
+    const mockAvatarParticipant = { identity: 'boson-avatar-host' } as unknown as RemoteParticipant;
 
     room.emit(
       RoomEvent.TrackSubscribed,
