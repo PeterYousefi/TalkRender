@@ -118,19 +118,21 @@ export class ToolExecutionQueue {
           actionId: current.id,
           originalArgs: current.args,
         };
+        this.history.push(current);
         this.emit('itemCompleted', current);
       } else {
         current.status = 'failed';
         current.error = execResult.error;
+        this.history.push(current);
         this.emit('itemFailed', current);
       }
     } catch (err: unknown) {
       current.status = 'failed';
       current.error = err instanceof Error ? err.message : String(err);
       current.durationMs = Math.round(performance.now() - startTime);
+      this.history.push(current);
       this.emit('itemFailed', current);
     } finally {
-      this.history.push(current);
       this.isProcessing = false;
       this.processNext();
     }
