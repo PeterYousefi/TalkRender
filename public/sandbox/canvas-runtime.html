@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';">
+  <title>TalkRender Canvas Sandbox Runtime</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0a0d14;
+      color: #e0f2fe;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    }
+    #canvas-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    #talkrender-viewport {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    #sandbox-status {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-size: 11px;
+      font-family: monospace;
+      color: rgba(0, 243, 255, 0.6);
+      pointer-events: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container">
+    <canvas id="talkrender-viewport"></canvas>
+    <div id="sandbox-status">TALKRENDER SECURE RUNTIME v1.0</div>
+  </div>
+
+  <script src="/sandbox/renderer.js"></script>
+  <script src="/sandbox/physics.js"></script>
+  <script src="/sandbox/state-preserver.js"></script>
+  <script src="/sandbox/script-executor.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.getElementById('talkrender-viewport');
+      if (window.TalkRenderRuntime) {
+        window.TalkRenderRuntime.init(canvas);
+      }
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({
+          type: 'GUEST_READY',
+          version: '1.0.0',
+          viewport: {
+            width: window.innerWidth,
+            height: window.innerHeight
+          }
+        }, '*');
+      }
+    });
+  </script>
+</body>
+</html>
