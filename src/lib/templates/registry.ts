@@ -82,8 +82,8 @@ export class TemplateRegistry {
     const normalized = spokenPhrase.toLowerCase().trim();
     const allTriggers = this.getAllVoiceTriggers();
 
-    // Exact or substring match
-    return allTriggers.find((t) => {
+    // 1. Exact or substring match
+    const exact = allTriggers.find((t) => {
       const triggerNorm = t.voicePhrase.toLowerCase();
       return (
         normalized.includes(triggerNorm) ||
@@ -91,6 +91,40 @@ export class TemplateRegistry {
         t.description.toLowerCase().includes(normalized)
       );
     });
+    if (exact) return exact;
+
+    // 2. Token overlap matching for natural voice flexibility
+    const queryTokens = new Set(
+      normalized
+        .replace(/[^a-z0-9 ]/g, ' ')
+        .split(/\s+/)
+        .filter((w) => w.length > 2)
+    );
+
+    let bestTrigger: PromptTrigger | undefined;
+    let maxOverlap = 0;
+
+    for (const t of allTriggers) {
+      const triggerTokens = t.voicePhrase
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]/g, ' ')
+        .split(/\s+/)
+        .filter((w) => w.length > 2);
+
+      let overlap = 0;
+      for (const token of triggerTokens) {
+        if (queryTokens.has(token)) {
+          overlap++;
+        }
+      }
+
+      if (overlap >= 2 && overlap > maxOverlap) {
+        maxOverlap = overlap;
+        bestTrigger = t;
+      }
+    }
+
+    return bestTrigger;
   }
 
   public generateInitializationCommands(templateId: string): CanvasCommandAction[] {
