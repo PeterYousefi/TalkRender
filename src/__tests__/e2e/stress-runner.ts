@@ -67,6 +67,9 @@ export class RapidToolStressRunner {
             styles: { opacity: '0.95' },
           };
           break;
+        default:
+          args = { shape: 'circle' };
+          break;
       }
 
       this.queue.enqueue(toolName, args, `stress_call_${i}`);
