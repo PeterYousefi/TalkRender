@@ -38,6 +38,9 @@ export class BargeInStressSimulator {
 
     const initialPending = this.harness.toolQueue.getPending().length;
 
+    // Allow first tool to complete execution
+    await new Promise((r) => setTimeout(r, 15));
+
     // 2. Mid-flight user barge-in burst (-18 dBFS)
     this.harness.simulateBargeIn(-18);
 
