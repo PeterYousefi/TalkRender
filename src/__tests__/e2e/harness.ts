@@ -3,7 +3,6 @@
  * Simulates complete full-duplex TalkRender stack: LiveKit, Boson AI, and Sandbox Iframe.
  */
 
-import { BosonRealtimeClient } from '@/lib/boson-client';
 import { ToolExecutionQueue } from '@/lib/tool-queue';
 import { SandboxBridge } from '@/lib/sandbox-bridge';
 import { InterruptionManager } from '@/lib/interruption-manager';
