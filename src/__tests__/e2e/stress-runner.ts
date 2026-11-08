@@ -33,16 +33,41 @@ export class RapidToolStressRunner {
 
     for (let i = 0; i < count; i++) {
       const toolName = toolTypes[i % toolTypes.length];
-      const args: Record<string, unknown> = {
-        id: `stress_obj_${i}`,
-        type: i % 2 === 0 ? 'circle' : 'rectangle',
-        x: (i * 15) % 800,
-        y: (i * 12) % 600,
-        radius: 10 + (i % 20),
-        width: 30,
-        height: 30,
-        color: '#06b6d4',
-      };
+      let args: Record<string, unknown>;
+
+      switch (toolName) {
+        case 'draw_shape':
+          args = {
+            shape: 'circle',
+            x: (i * 15) % 800,
+            y: (i * 12) % 600,
+            radius: 10 + (i % 20),
+            color: '#06b6d4',
+          };
+          break;
+        case 'create_physics_body':
+          args = {
+            bodyType: 'circle',
+            x: (i * 14) % 800,
+            y: (i * 10) % 500,
+            radius: 12,
+            mass: 1.0,
+            restitution: 0.8,
+          };
+          break;
+        case 'set_background':
+          args = {
+            mode: 'solid',
+            color: '#090d16',
+          };
+          break;
+        case 'update_style':
+          args = {
+            selector: 'canvas',
+            styles: { opacity: '0.95' },
+          };
+          break;
+      }
 
       this.queue.enqueue(toolName, args, `stress_call_${i}`);
     }
