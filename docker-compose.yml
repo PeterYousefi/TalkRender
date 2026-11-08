@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  talkrender:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: talkrender:latest
+    container_name: talkrender-app
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:3000']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
