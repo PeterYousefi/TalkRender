@@ -6,6 +6,7 @@
 import {
   Room,
   RoomEvent,
+  ConnectionState,
   Track,
   RemoteTrack,
   RemoteTrackPublication,
@@ -164,16 +165,38 @@ export class LiveKitConnectionManager {
   }
 
   public async setMicrophoneEnabled(enabled: boolean): Promise<void> {
+    if (this.currentStatus !== 'connected' || this.room.state !== ConnectionState.Connected) {
+      this.emit('stateChange', {
+        ...this.getSnapshot(),
+        isAudioEnabled: enabled,
+      });
+      return;
+    }
     if (this.room.localParticipant) {
-      await this.room.localParticipant.setMicrophoneEnabled(enabled);
-      this.emit('stateChange', this.getSnapshot());
+      try {
+        await this.room.localParticipant.setMicrophoneEnabled(enabled);
+        this.emit('stateChange', this.getSnapshot());
+      } catch (err) {
+        console.warn('Failed to set microphone state on LiveKit:', err);
+      }
     }
   }
 
   public async setCameraEnabled(enabled: boolean): Promise<void> {
+    if (this.currentStatus !== 'connected' || this.room.state !== ConnectionState.Connected) {
+      this.emit('stateChange', {
+        ...this.getSnapshot(),
+        isVideoEnabled: enabled,
+      });
+      return;
+    }
     if (this.room.localParticipant) {
-      await this.room.localParticipant.setCameraEnabled(enabled);
-      this.emit('stateChange', this.getSnapshot());
+      try {
+        await this.room.localParticipant.setCameraEnabled(enabled);
+        this.emit('stateChange', this.getSnapshot());
+      } catch (err) {
+        console.warn('Failed to set camera state on LiveKit:', err);
+      }
     }
   }
 }

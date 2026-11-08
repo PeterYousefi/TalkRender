@@ -63,13 +63,21 @@ export function useLiveKitRoom(options: UseLiveKitRoomOptions = {}) {
   }, [manager]);
 
   const toggleMicrophone = useCallback(async () => {
-    const nextState = !state.isAudioEnabled;
-    await manager.setMicrophoneEnabled(nextState);
+    try {
+      const nextState = !state.isAudioEnabled;
+      await manager.setMicrophoneEnabled(nextState);
+    } catch (err) {
+      console.warn('Microphone toggle caught:', err);
+    }
   }, [manager, state.isAudioEnabled]);
 
   const toggleCamera = useCallback(async () => {
-    const nextState = !state.isVideoEnabled;
-    await manager.setCameraEnabled(nextState);
+    try {
+      const nextState = !state.isVideoEnabled;
+      await manager.setCameraEnabled(nextState);
+    } catch (err) {
+      console.warn('Camera toggle caught:', err);
+    }
   }, [manager, state.isVideoEnabled]);
 
   useEffect(() => {
