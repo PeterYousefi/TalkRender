@@ -30,8 +30,13 @@ export const ManualCommandTerminal: React.FC<ManualCommandTerminalProps> = ({
   const [inputVal, setInputVal] = useState('');
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
+  const [mounted, setMounted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -191,13 +196,15 @@ export const ManualCommandTerminal: React.FC<ManualCommandTerminalProps> = ({
 
           return (
             <div key={m.id} className="leading-relaxed">
-              <span className="text-[10px] text-slate-600 mr-2">
-                {new Date(m.timestamp).toLocaleTimeString([], {
-                  hour12: false,
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit',
-                })}
+              <span suppressHydrationWarning className="text-[10px] text-slate-600 mr-2">
+                {mounted
+                  ? new Date(m.timestamp).toLocaleTimeString([], {
+                      hour12: false,
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                    })
+                  : '--:--:--'}
               </span>
               <span className={colorClass}>
                 {prefix}
