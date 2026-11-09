@@ -132,15 +132,15 @@ export const ManualCommandTerminal: React.FC<ManualCommandTerminalProps> = ({
   return (
     <div
       data-testid="manual-command-terminal"
-      className={`flex flex-col rounded-xl border border-slate-800 bg-slate-950/95 font-mono text-xs text-slate-200 shadow-xl overflow-hidden ${className}`}
+      className={`flex flex-col rounded-xl border border-white/[0.08] bg-zinc-950/95 font-mono text-xs text-zinc-300 shadow-2xl overflow-hidden backdrop-blur-xl ${className}`}
     >
       {/* Terminal Titlebar */}
-      <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900/60 px-3 py-1.5">
+      <div className="flex items-center justify-between border-b border-white/[0.06] bg-zinc-900/60 px-3.5 py-2">
         <div className="flex items-center gap-2">
           <Terminal className="h-3.5 w-3.5 text-cyan-400" />
-          <span className="font-semibold text-slate-300">Command Terminal</span>
+          <span className="font-medium text-zinc-200">Command Terminal</span>
           {isMuted && (
-            <span className="rounded bg-amber-950/80 px-1.5 py-0.5 text-[9px] font-bold text-amber-400 border border-amber-600/40">
+            <span className="rounded-full bg-amber-950/60 px-2 py-0.5 text-[9px] font-medium text-amber-300 border border-amber-800/60">
               MIC MUTED - MANUAL OVERRIDE
             </span>
           )}
@@ -154,7 +154,7 @@ export const ManualCommandTerminal: React.FC<ManualCommandTerminalProps> = ({
               setInputVal('help');
               inputRef.current?.focus();
             }}
-            className="rounded p-1 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+            className="rounded p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white transition-all"
             title="Help instructions"
           >
             <HelpCircle className="h-3.5 w-3.5" />
@@ -164,7 +164,7 @@ export const ManualCommandTerminal: React.FC<ManualCommandTerminalProps> = ({
             type="button"
             data-testid="terminal-clear-btn"
             onClick={() => setMessages([])}
-            className="rounded p-1 text-slate-400 hover:bg-slate-800 hover:text-rose-400 transition-colors"
+            className="rounded p-1 text-zinc-400 hover:bg-zinc-800 hover:text-rose-400 transition-all"
             title="Clear buffer"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -176,27 +176,27 @@ export const ManualCommandTerminal: React.FC<ManualCommandTerminalProps> = ({
       <div
         ref={scrollRef}
         data-testid="terminal-output-log"
-        className="flex-1 space-y-1.5 overflow-y-auto p-3 min-h-[140px] max-h-[220px]"
+        className="flex-1 space-y-1.5 overflow-y-auto p-3.5 min-h-[140px] max-h-[220px]"
       >
         {messages.map((m) => {
-          let colorClass = 'text-slate-300';
+          let colorClass = 'text-zinc-300';
           let prefix = '';
 
           if (m.type === 'input') {
-            colorClass = 'text-cyan-300 font-semibold';
+            colorClass = 'text-cyan-300 font-medium';
             prefix = '$ ';
           } else if (m.type === 'error') {
             colorClass = 'text-rose-400';
             prefix = '[ERR] ';
           } else if (m.type === 'system') {
-            colorClass = 'text-slate-500 italic';
+            colorClass = 'text-zinc-500 italic';
           } else if (m.type === 'output') {
             colorClass = 'text-emerald-400 whitespace-pre-wrap';
           }
 
           return (
             <div key={m.id} className="leading-relaxed">
-              <span suppressHydrationWarning className="text-[10px] text-slate-600 mr-2">
+              <span suppressHydrationWarning className="text-[10px] text-zinc-600 mr-2">
                 {mounted
                   ? new Date(m.timestamp).toLocaleTimeString([], {
                       hour12: false,
@@ -218,7 +218,7 @@ export const ManualCommandTerminal: React.FC<ManualCommandTerminalProps> = ({
       {/* Terminal Input Form */}
       <form
         onSubmit={handleSubmit}
-        className="flex items-center gap-2 border-t border-slate-800/80 bg-slate-900/40 px-3 py-2"
+        className="flex items-center gap-2 border-t border-white/[0.06] bg-zinc-900/40 px-3.5 py-2.5"
       >
         <span className="font-bold text-cyan-400">$</span>
         <input
@@ -228,14 +228,14 @@ export const ManualCommandTerminal: React.FC<ManualCommandTerminalProps> = ({
           value={inputVal}
           onChange={(e) => setInputVal(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder='Type voice command or JSON tool call, e.g. "Drop bouncy orbs"...'
-          className="flex-1 bg-transparent text-slate-100 placeholder:text-slate-600 focus:outline-none"
+          placeholder='Type voice directive or tool call, e.g. "Drop bouncy orbs"...'
+          className="flex-1 bg-transparent text-zinc-100 placeholder:text-zinc-600 focus:outline-none text-xs"
         />
         <button
           type="submit"
           data-testid="terminal-submit-btn"
           disabled={!inputVal.trim()}
-          className="rounded p-1 text-cyan-400 hover:bg-slate-800 disabled:opacity-40 transition-all"
+          className="rounded p-1 text-cyan-400 hover:bg-zinc-800 disabled:opacity-40 transition-all"
         >
           <CornerDownLeft className="h-3.5 w-3.5" />
         </button>
