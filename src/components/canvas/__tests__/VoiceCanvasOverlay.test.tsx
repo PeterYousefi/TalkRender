@@ -18,7 +18,7 @@ describe('VoiceCanvasOverlay Component', () => {
 
     expect(screen.getByTestId('voice-canvas-overlay')).toBeDefined();
     expect(screen.getByTestId('voice-hud-mic-btn')).toBeDefined();
-    expect(screen.getByText('CLICK TO TALK TO CANVAS')).toBeDefined();
+    expect(screen.getByText('Direct Canvas with Voice')).toBeDefined();
   });
 
   it('should show active listening state when isListening is true', () => {
@@ -33,8 +33,8 @@ describe('VoiceCanvasOverlay Component', () => {
       />
     );
 
-    expect(screen.getByText('STOP LISTENING')).toBeDefined();
-    expect(screen.getByText('🎤 LISTENING TO VOICE...')).toBeDefined();
+    expect(screen.getByText('Stop Listening')).toBeDefined();
+    expect(screen.getByText('Listening...')).toBeDefined();
   });
 
   it('should display transcript when provided', () => {
@@ -49,7 +49,7 @@ describe('VoiceCanvasOverlay Component', () => {
       />
     );
 
-    expect(screen.getByText('VOICE TRANSCRIPT')).toBeDefined();
+    expect(screen.getByText('Voice Directive')).toBeDefined();
     expect(screen.getByText(/Draw a glowing cyan circle/)).toBeDefined();
   });
 
@@ -66,7 +66,7 @@ describe('VoiceCanvasOverlay Component', () => {
       />
     );
 
-    const starBtn = screen.getByTestId('quick-prompt-🌟 Draw Neon Star');
+    const starBtn = screen.getByTestId('quick-prompt-Vector Star');
     fireEvent.click(starBtn);
     expect(handlePrompt).toHaveBeenCalledWith('Draw a glowing cyan star');
   });

@@ -14,13 +14,13 @@ export interface VoiceCanvasOverlayProps {
 }
 
 const QUICK_PROMPTS = [
-  { label: '🌟 Draw Neon Star', prompt: 'Draw a glowing cyan star' },
-  { label: '🟣 Purple Circle', prompt: 'Draw a purple circle' },
-  { label: '🟩 Green Box', prompt: 'Draw an emerald rectangle' },
-  { label: '⚡ Matrix Rain', prompt: 'Start matrix rain' },
-  { label: '🪐 Solar System', prompt: 'Show me the solar system' },
-  { label: '⚽ Physics Bouncing', prompt: 'Enable gravity and bouncing balls' },
-  { label: '🧹 Clear Stage', prompt: 'Clear canvas' },
+  { id: 'star', label: 'Vector Star', prompt: 'Draw a glowing cyan star' },
+  { id: 'circle', label: 'Circle Geometry', prompt: 'Draw a purple circle' },
+  { id: 'box', label: 'Square Geometry', prompt: 'Draw an emerald rectangle' },
+  { id: 'matrix', label: 'Matrix Stream', prompt: 'Start matrix rain' },
+  { id: 'solar', label: 'Orbital System', prompt: 'Show me the solar system' },
+  { id: 'physics', label: 'Physics Bodies', prompt: 'Enable gravity and bouncing balls' },
+  { id: 'clear', label: 'Reset Canvas', prompt: 'Clear canvas' },
 ];
 
 export const VoiceCanvasOverlay: React.FC<VoiceCanvasOverlayProps> = ({
@@ -37,78 +37,78 @@ export const VoiceCanvasOverlay: React.FC<VoiceCanvasOverlayProps> = ({
   return (
     <div
       data-testid="voice-canvas-overlay"
-      className={`pointer-events-none absolute inset-0 z-20 flex flex-col justify-between p-4 ${className}`}
+      className={`pointer-events-none absolute inset-0 z-20 flex flex-col justify-between p-5 font-sans ${className}`}
     >
-      {/* Top Floating Speech Status Bar */}
+      {/* Top Floating Acoustic Status Bar */}
       <div className="flex w-full items-center justify-between">
-        <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-cyan-500/40 bg-slate-950/80 px-3 py-1.5 font-mono text-xs shadow-[0_0_15px_rgba(6,182,212,0.2)] backdrop-blur-md">
+        <div className="pointer-events-auto flex items-center gap-2.5 rounded-full border border-white/[0.08] bg-zinc-950/70 px-3.5 py-1.5 text-xs text-zinc-300 shadow-xl backdrop-blur-xl">
           <span
-            className={`h-2.5 w-2.5 rounded-full ${
+            className={`h-2 w-2 rounded-full transition-all duration-300 ${
               isListening
-                ? 'bg-rose-500 shadow-[0_0_10px_#f43f5e] animate-pulse'
+                ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)] animate-pulse'
                 : isSpeaking
-                ? 'bg-cyan-400 shadow-[0_0_10px_#00f3ff] animate-ping'
-                : 'bg-emerald-400 shadow-[0_0_8px_#10b981]'
+                ? 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.6)]'
+                : 'bg-emerald-500/80'
             }`}
           />
-          <span className="font-semibold text-slate-200">
+          <span className="font-medium tracking-tight text-zinc-300">
             {isListening
-              ? '🎤 LISTENING TO VOICE...'
+              ? 'Listening...'
               : isSpeaking
-              ? '🔊 COPILOT SPEAKING...'
-              : '⚡ VOICE ENGINE READY'}
+              ? 'Assistant Speaking'
+              : 'Voice Engine Active'}
           </span>
         </div>
 
-        {/* Big Mic Push-to-Talk Toggle */}
+        {/* Executive Voice Control Capsule */}
         <button
           type="button"
           data-testid="voice-hud-mic-btn"
           onClick={onToggleListening}
-          className={`pointer-events-auto flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold transition-all shadow-xl backdrop-blur-md ${
+          className={`pointer-events-auto flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium tracking-tight transition-all duration-200 shadow-xl backdrop-blur-xl ${
             isListening
-              ? 'bg-rose-600 text-white shadow-[0_0_20px_rgba(244,63,94,0.6)] animate-pulse'
-              : 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:scale-105'
+              ? 'bg-rose-950/80 hover:bg-rose-900 border border-rose-800/80 text-rose-200 shadow-[0_0_20px_rgba(244,63,94,0.25)]'
+              : 'bg-zinc-900/90 hover:bg-zinc-800/95 border border-white/[0.12] text-zinc-100 hover:border-white/[0.24] hover:shadow-2xl'
           }`}
         >
           {isListening ? (
             <>
-              <MicOff className="h-4 w-4" />
-              <span>STOP LISTENING</span>
+              <MicOff className="h-3.5 w-3.5 text-rose-400" />
+              <span>Stop Listening</span>
             </>
           ) : (
             <>
-              <Mic className="h-4 w-4" />
-              <span>CLICK TO TALK TO CANVAS</span>
+              <Mic className="h-3.5 w-3.5 text-zinc-300" />
+              <span>Direct Canvas with Voice</span>
             </>
           )}
         </button>
       </div>
 
-      {/* Center Live Speech Transcript Wave Banner */}
+      {/* Center Live Speech Transcript Card */}
       {displaySpeech && (
-        <div className="pointer-events-auto mx-auto my-auto max-w-xl animate-in fade-in zoom-in-95 duration-200">
-          <div className="rounded-2xl border border-cyan-400/50 bg-slate-950/90 p-4 text-center shadow-[0_0_30px_rgba(6,182,212,0.3)] backdrop-blur-xl">
-            <div className="mb-1 flex items-center justify-center gap-2 text-xs font-mono font-bold text-cyan-400">
-              <Sparkles className="h-3.5 w-3.5 animate-spin" />
-              <span>VOICE TRANSCRIPT</span>
+        <div className="pointer-events-auto mx-auto my-auto max-w-lg animate-in fade-in zoom-in-95 duration-200">
+          <div className="rounded-2xl border border-white/[0.1] bg-zinc-950/85 p-5 text-center shadow-2xl backdrop-blur-2xl">
+            <div className="mb-2 flex items-center justify-center gap-1.5 text-[11px] font-medium tracking-wider text-zinc-400 uppercase">
+              <Sparkles className="h-3 w-3 text-cyan-400" />
+              <span>Voice Directive</span>
             </div>
-            <p className="font-mono text-base font-semibold text-white drop-shadow-md">
+            <p className="text-lg font-medium tracking-tight text-white">
               &ldquo;{displaySpeech}&rdquo;
             </p>
           </div>
         </div>
       )}
 
-      {/* Bottom Floating Quick-Voice Trigger Chips */}
+      {/* Bottom Minimalist Directive Chips */}
       <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-2 pb-1">
         {QUICK_PROMPTS.map((item) => (
           <button
-            key={item.label}
+            key={item.id}
             type="button"
             data-testid={`quick-prompt-${item.label}`}
             onClick={() => onTriggerPrompt(item.prompt)}
-            className="rounded-full border border-slate-700/80 bg-slate-900/85 px-3 py-1 font-mono text-xs text-slate-300 shadow-md backdrop-blur-md transition-all hover:border-cyan-400 hover:bg-slate-800 hover:text-cyan-300 hover:scale-105"
+            className="rounded-full border border-white/[0.08] bg-zinc-900/70 px-3.5 py-1.5 text-xs font-medium text-zinc-300 shadow-md backdrop-blur-xl transition-all duration-150 hover:border-white/[0.22] hover:bg-zinc-800 hover:text-white"
           >
             {item.label}
           </button>
