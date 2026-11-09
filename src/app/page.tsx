@@ -252,7 +252,7 @@ export default function WorkspacePage() {
   return (
     <div
       data-testid="workspace-root"
-      className="flex h-screen w-screen flex-col overflow-hidden bg-slate-950 text-slate-100"
+      className="flex h-screen w-screen flex-col overflow-hidden bg-zinc-950 text-zinc-100 font-sans"
     >
       {/* Top Application Header */}
       <WorkspaceHeader
@@ -284,9 +284,9 @@ export default function WorkspacePage() {
         }}
         // Left Panel: Co-Pilot Talking Avatar
         leftPanel={
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3.5">
             <AvatarContainer
-              avatarName="BOSON HIGGS COPILOT"
+              avatarName="Acoustic Co-Pilot"
               track={avatarTrack}
               isSpeaking={interruptionState.isInterrupted ? false : bosonStatus === 'speaking' || isVoiceSpeaking}
               isMuted={!isVoiceListening && !liveKitRoomState.isAudioEnabled}
@@ -313,20 +313,22 @@ export default function WorkspacePage() {
         // Center Panel: Live Sandboxed Canvas & Controls
         centerPanel={
           <div className="relative flex h-full w-full flex-col">
-            <CanvasToolbar
-              onClear={() => clearCanvas('all')}
-              onRollback={() => {
-                const rolledBack = queue.rollbackLast();
-                if (rolledBack && bridge) {
-                  bridge.sendCommand(`rollback_${rolledBack.id}`, {
-                    type: 'ROLLBACK_ACTION',
-                    payload: { actionId: rolledBack.id },
-                  });
-                }
-              }}
-              fps={canvasFps}
-              latencyMs={canvasLatencyMs}
-            />
+            <div className="absolute top-4 left-4 z-10 pointer-events-auto">
+              <CanvasToolbar
+                onClear={() => clearCanvas('all')}
+                onRollback={() => {
+                  const rolledBack = queue.rollbackLast();
+                  if (rolledBack && bridge) {
+                    bridge.sendCommand(`rollback_${rolledBack.id}`, {
+                      type: 'ROLLBACK_ACTION',
+                      payload: { actionId: rolledBack.id },
+                    });
+                  }
+                }}
+                fps={canvasFps}
+                latencyMs={canvasLatencyMs}
+              />
+            </div>
 
             <div className="relative flex-1 overflow-hidden">
               <CanvasSandbox onBridgeReady={handleBridgeReady} />
@@ -350,17 +352,17 @@ export default function WorkspacePage() {
         }
         // Right Panel: Inspector Tabs & Telemetry
         rightPanel={
-          <div className="flex h-full flex-col gap-3">
+          <div className="flex h-full flex-col gap-3 font-sans">
             {/* Inspector Navigation Tabs */}
-            <div className="flex items-center gap-1 border-b border-slate-800 pb-2">
+            <div className="flex items-center gap-1 border-b border-white/[0.08] pb-2.5">
               <button
                 type="button"
                 data-testid="tab-tools-btn"
                 onClick={() => setActiveInspectorTab('tools')}
-                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                   activeInspectorTab === 'tools'
-                    ? 'bg-cyan-500 text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                    ? 'bg-zinc-800 text-white border border-white/[0.12] shadow-sm'
+                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
                 }`}
               >
                 <Wrench className="h-3.5 w-3.5" />
@@ -371,10 +373,10 @@ export default function WorkspacePage() {
                 type="button"
                 data-testid="tab-code-btn"
                 onClick={() => setActiveInspectorTab('code')}
-                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                   activeInspectorTab === 'code'
-                    ? 'bg-cyan-500 text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                    ? 'bg-zinc-800 text-white border border-white/[0.12] shadow-sm'
+                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
                 }`}
               >
                 <Code2 className="h-3.5 w-3.5" />
@@ -385,10 +387,10 @@ export default function WorkspacePage() {
                 type="button"
                 data-testid="tab-telemetry-btn"
                 onClick={() => setActiveInspectorTab('telemetry')}
-                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                   activeInspectorTab === 'telemetry'
-                    ? 'bg-cyan-500 text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                    ? 'bg-zinc-800 text-white border border-white/[0.12] shadow-sm'
+                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
                 }`}
               >
                 <Activity className="h-3.5 w-3.5" />
@@ -399,10 +401,10 @@ export default function WorkspacePage() {
                 type="button"
                 data-testid="tab-templates-btn"
                 onClick={() => setActiveInspectorTab('templates')}
-                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                   activeInspectorTab === 'templates'
-                    ? 'bg-cyan-500 text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                    ? 'bg-zinc-800 text-white border border-white/[0.12] shadow-sm'
+                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
                 }`}
               >
                 <Layers className="h-3.5 w-3.5" />
@@ -470,14 +472,14 @@ export default function WorkspacePage() {
       {isTemplateModalOpen && (
         <div
           data-testid="template-modal-overlay"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 p-4 backdrop-blur-xl"
         >
-          <div className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-slate-800 bg-slate-950 p-6 shadow-2xl">
+          <div className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-white/[0.08] bg-zinc-950/95 p-6 shadow-2xl backdrop-blur-2xl">
             <button
               type="button"
               data-testid="close-template-modal-btn"
               onClick={() => setIsTemplateModalOpen(false)}
-              className="absolute right-4 top-4 rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
+              className="absolute right-4 top-4 rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800 hover:text-white transition-all"
             >
               <X className="h-5 w-5" />
             </button>
