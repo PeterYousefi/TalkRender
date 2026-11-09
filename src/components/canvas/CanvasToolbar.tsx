@@ -29,66 +29,68 @@ export function CanvasToolbar({
   return (
     <div
       data-testid="canvas-toolbar"
-      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-800/90 backdrop-blur-md border border-surface-600/60 shadow-lg text-zinc-300 ${className}`}
+      className={`flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-zinc-950/80 backdrop-blur-xl border border-white/[0.08] shadow-2xl text-zinc-300 font-sans ${className}`}
     >
       {/* Telemetry Indicator */}
-      <div className="flex items-center gap-1.5 pr-2 border-r border-surface-600/50 text-xs font-mono">
-        <Activity className="w-3.5 h-3.5 text-neon-cyan animate-pulse" />
-        <span className="text-zinc-400">{fps} FPS</span>
-        <span className="text-zinc-600">|</span>
-        <span className="text-zinc-400">{latencyMs}ms</span>
+      <div className="flex items-center gap-2 pr-3 border-r border-white/[0.08] text-[11px] font-mono text-zinc-400">
+        <Activity className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+        <span className="text-zinc-300">{fps} FPS</span>
+        <span className="text-zinc-600">·</span>
+        <span className="text-zinc-300">{latencyMs}ms</span>
         {elementsCount > 0 && (
           <>
-            <span className="text-zinc-600">|</span>
-            <span className="text-neon-emerald">{elementsCount} objs</span>
+            <span className="text-zinc-600">·</span>
+            <span className="text-emerald-400">{elementsCount} objs</span>
           </>
         )}
       </div>
 
       {/* Action Buttons */}
-      <button
-        type="button"
-        data-testid="toolbar-rollback-btn"
-        onClick={onRollback}
-        disabled={disabled}
-        title="Rollback Last Voice Command"
-        className="p-1.5 rounded hover:bg-surface-700 active:scale-95 disabled:opacity-40 transition-all text-zinc-300 hover:text-neon-cyan"
-      >
-        <Undo2 className="w-4 h-4" />
-      </button>
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          data-testid="toolbar-rollback-btn"
+          onClick={onRollback}
+          disabled={disabled}
+          title="Rollback Last Voice Command"
+          className="p-1.5 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 active:scale-95 disabled:opacity-30 transition-all"
+        >
+          <Undo2 className="w-3.5 h-3.5" />
+        </button>
 
-      <button
-        type="button"
-        data-testid="toolbar-grid-btn"
-        onClick={onToggleGrid}
-        disabled={disabled}
-        title="Toggle Cyberpunk Mesh Grid"
-        className="p-1.5 rounded hover:bg-surface-700 active:scale-95 disabled:opacity-40 transition-all text-zinc-300 hover:text-neon-cyan"
-      >
-        <Grid className="w-4 h-4" />
-      </button>
+        <button
+          type="button"
+          data-testid="toolbar-grid-btn"
+          onClick={onToggleGrid}
+          disabled={disabled}
+          title="Toggle Canvas Grid"
+          className="p-1.5 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 active:scale-95 disabled:opacity-30 transition-all"
+        >
+          <Grid className="w-3.5 h-3.5" />
+        </button>
 
-      <button
-        type="button"
-        data-testid="toolbar-snapshot-btn"
-        onClick={onSnapshot}
-        disabled={disabled}
-        title="Capture Canvas Snapshot"
-        className="p-1.5 rounded hover:bg-surface-700 active:scale-95 disabled:opacity-40 transition-all text-zinc-300 hover:text-neon-cyan"
-      >
-        <Camera className="w-4 h-4" />
-      </button>
+        <button
+          type="button"
+          data-testid="toolbar-snapshot-btn"
+          onClick={onSnapshot}
+          disabled={disabled}
+          title="Capture Canvas Snapshot"
+          className="p-1.5 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 active:scale-95 disabled:opacity-30 transition-all"
+        >
+          <Camera className="w-3.5 h-3.5" />
+        </button>
 
-      <button
-        type="button"
-        data-testid="toolbar-clear-btn"
-        onClick={onClear}
-        disabled={disabled}
-        title="Clear Canvas Elements"
-        className="p-1.5 rounded hover:bg-surface-700 active:scale-95 disabled:opacity-40 transition-all text-zinc-300 hover:text-neon-magenta"
-      >
-        <Trash2 className="w-4 h-4" />
-      </button>
+        <button
+          type="button"
+          data-testid="toolbar-clear-btn"
+          onClick={onClear}
+          disabled={disabled}
+          title="Clear Canvas Elements"
+          className="p-1.5 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-rose-400 active:scale-95 disabled:opacity-30 transition-all"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
+      </div>
     </div>
   );
 }
