@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Mic, MicOff, Palette, Layers, Radio, Square, RotateCcw, Sparkles } from 'lucide-react';
+import { Mic, MicOff, Palette, Layers, Radio, Square, RotateCcw, LayoutTemplate } from 'lucide-react';
 import type { WorkspaceTheme } from '@/types/workspace';
 import type { BosonSessionStatus } from '@/types/boson';
 import type { LiveKitConnectionStatus } from '@/types/livekit';
@@ -23,7 +23,7 @@ export interface WorkspaceHeaderProps {
 }
 
 const THEMES: { id: WorkspaceTheme; label: string }[] = [
-  { id: 'cyberpunk', label: 'Cyberpunk' },
+  { id: 'cyberpunk', label: 'Obsidian' },
   { id: 'dark', label: 'Dark' },
   { id: 'slate', label: 'Slate' },
 ];
@@ -46,44 +46,49 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
   return (
     <header
       data-testid="workspace-header"
-      className={`flex items-center justify-between border-b border-slate-800 bg-slate-950/90 px-4 py-2.5 font-mono text-xs text-slate-200 backdrop-blur-md shadow-md ${className}`}
+      className={`flex items-center justify-between border-b border-white/[0.08] bg-zinc-950/85 px-4 py-2.5 font-sans text-xs text-zinc-200 backdrop-blur-xl shadow-lg ${className}`}
     >
       {/* Brand & Connection State */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.8)] animate-pulse" />
-          <span className="text-sm font-black tracking-wider text-slate-100 uppercase">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2.5">
+          <div className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+          <span className="text-sm font-semibold tracking-tight text-white">
             TalkRender
           </span>
-          <span className="rounded bg-cyan-950/80 px-1.5 py-0.5 text-[9px] font-bold text-cyan-400 border border-cyan-800/60 hidden sm:inline-block">
-            BOSON + LIVEKIT
+          <span className="rounded-full bg-zinc-900 border border-white/[0.06] px-2 py-0.5 text-[10px] font-medium text-zinc-400 hidden sm:inline-block">
+            Voice Canvas
           </span>
         </div>
 
-        {/* Live Status Indicators */}
-        <div className="hidden md:flex items-center gap-2 text-[10px]">
+        {/* Quiet Live Status Badges */}
+        <div className="hidden md:flex items-center gap-2 text-[11px]">
           <span
             data-testid="livekit-status-pill"
-            className={`rounded px-1.5 py-0.5 font-bold uppercase ${
+            className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-medium transition-colors ${
               liveKitState === 'connected'
-                ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/60'
-                : 'bg-amber-950/80 text-amber-400 border border-amber-800/60'
+                ? 'bg-zinc-900/90 text-zinc-300 border border-white/[0.08]'
+                : 'bg-amber-950/60 text-amber-300 border border-amber-800/60'
             }`}
           >
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                liveKitState === 'connected' ? 'bg-emerald-400' : 'bg-amber-400'
+              }`}
+            />
             RTC: {liveKitState}
           </span>
 
           <span
             data-testid="boson-status-pill"
-            className={`flex items-center gap-1 rounded px-1.5 py-0.5 font-bold uppercase ${
+            className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-medium transition-colors ${
               bosonStatus === 'connected' || bosonStatus === 'speaking' || bosonStatus === 'listening'
-                ? 'bg-cyan-950/80 text-cyan-400 border border-cyan-800/60'
+                ? 'bg-zinc-900/90 text-zinc-300 border border-white/[0.08]'
                 : bosonStatus === 'interrupted'
-                ? 'bg-rose-950/80 text-rose-400 border border-rose-800/60 animate-pulse'
-                : 'bg-slate-900 text-slate-400 border border-slate-800'
+                ? 'bg-rose-950/60 text-rose-300 border border-rose-800/60 animate-pulse'
+                : 'bg-zinc-900/60 text-zinc-400 border border-white/[0.06]'
             }`}
           >
-            <Radio className="h-2.5 w-2.5" />
+            <Radio className="h-3 w-3 text-cyan-400" />
             AI: {bosonStatus}
           </span>
         </div>
@@ -91,22 +96,22 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
 
       {/* Action Controls & Toggles */}
       <div className="flex items-center gap-2">
-        {/* Studio / Dev Mode Switcher */}
+        {/* Studio / Inspector Segmented Toggle */}
         {onToggleViewMode && (
           <button
             type="button"
             data-testid="toggle-view-mode-btn"
             onClick={onToggleViewMode}
-            className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold border transition-all ${
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium border transition-all ${
               viewMode === 'studio'
-                ? 'bg-cyan-950/90 text-cyan-300 border-cyan-600/70 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
-                : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                ? 'bg-zinc-800 text-white border-white/[0.16] shadow-sm'
+                : 'bg-zinc-900/80 text-zinc-400 border-white/[0.06] hover:text-zinc-200'
             }`}
-            title="Switch between Visual Canvas Studio and Developer Inspector"
+            title="Switch between Canvas Studio and Developer Inspector"
           >
-            <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
+            <LayoutTemplate className="h-3.5 w-3.5 text-cyan-400" />
             <span className="hidden sm:inline">
-              {viewMode === 'studio' ? '🎨 Studio Mode' : '🛠️ Dev Mode'}
+              {viewMode === 'studio' ? 'Studio Mode' : 'Inspector'}
             </span>
           </button>
         )}
@@ -116,10 +121,10 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
           type="button"
           data-testid="open-templates-btn"
           onClick={onOpenTemplates}
-          className="flex items-center gap-1 rounded-lg bg-slate-900/80 px-2.5 py-1 text-xs text-slate-300 hover:bg-slate-800 hover:text-cyan-300 border border-slate-800 transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-zinc-900/80 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white border border-white/[0.08] transition-all"
           title="Browse interactive scene templates"
         >
-          <Layers className="h-3.5 w-3.5 text-cyan-400" />
+          <Layers className="h-3.5 w-3.5 text-zinc-400" />
           <span className="hidden sm:inline">Templates</span>
         </button>
 
@@ -128,10 +133,10 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
           type="button"
           data-testid="toggle-rollback-btn"
           onClick={onToggleAutoRollback}
-          className={`flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs border transition-colors ${
+          className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium border transition-all ${
             autoRollback
-              ? 'bg-violet-950/60 text-violet-300 border-violet-800/60'
-              : 'bg-slate-900/80 text-slate-500 border-slate-800 hover:text-slate-300'
+              ? 'bg-zinc-900 text-zinc-200 border-white/[0.12]'
+              : 'bg-zinc-900/50 text-zinc-500 border-white/[0.06] hover:text-zinc-300'
           }`}
           title="Auto-rollback last tool call if interrupted"
         >
@@ -144,45 +149,49 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
           type="button"
           data-testid="header-mic-toggle-btn"
           onClick={onToggleMic}
-          className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
+          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
             isMicMuted
-              ? 'bg-rose-950 text-rose-300 border border-rose-800'
-              : 'bg-emerald-950/80 text-emerald-400 border border-emerald-700/60 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
+              ? 'bg-zinc-900 text-zinc-400 border border-white/[0.08] hover:text-zinc-200'
+              : 'bg-zinc-900 text-zinc-100 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
           }`}
           title={isMicMuted ? 'Unmute microphone' : 'Mute microphone'}
         >
-          {isMicMuted ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
-          <span>{isMicMuted ? 'Muted' : 'Mic On'}</span>
+          {isMicMuted ? (
+            <MicOff className="h-3.5 w-3.5 text-rose-400" />
+          ) : (
+            <Mic className="h-3.5 w-3.5 text-emerald-400" />
+          )}
+          <span>{isMicMuted ? 'Muted' : 'Mic Active'}</span>
         </button>
 
-        {/* Emergency Stop / Barge-in manual trigger */}
+        {/* Emergency Stop Button */}
         {onEmergencyStop && (
           <button
             type="button"
             data-testid="emergency-stop-btn"
             onClick={onEmergencyStop}
-            className="flex items-center gap-1 rounded-lg bg-rose-600 px-2 py-1 text-xs font-bold text-white hover:bg-rose-500 transition-colors shadow-md"
+            className="flex items-center gap-1.5 rounded-lg bg-rose-950/70 hover:bg-rose-900/80 px-2.5 py-1.5 text-xs font-medium text-rose-200 border border-rose-800/60 transition-all shadow-sm"
             title="Emergency halt AI generation & flush buffers"
           >
-            <Square className="h-3 w-3 fill-white" />
+            <Square className="h-3 w-3 fill-rose-300 text-rose-300" />
             <span className="hidden lg:inline">Stop</span>
           </button>
         )}
 
         {/* Theme Selector */}
-        <div className="flex items-center gap-1 border-l border-slate-800 pl-2">
-          <Palette className="h-3.5 w-3.5 text-slate-500" />
-          <div className="flex rounded-md bg-slate-900/90 p-0.5 border border-slate-800">
+        <div className="flex items-center gap-1.5 border-l border-white/[0.08] pl-2.5">
+          <Palette className="h-3.5 w-3.5 text-zinc-500" />
+          <div className="flex rounded-lg bg-zinc-900/90 p-0.5 border border-white/[0.06]">
             {THEMES.map((t) => (
               <button
                 key={t.id}
                 type="button"
                 data-testid={`theme-btn-${t.id}`}
                 onClick={() => onThemeChange(t.id)}
-                className={`rounded px-1.5 py-0.5 text-[10px] font-semibold transition-all ${
+                className={`rounded px-2 py-0.5 text-[10px] font-medium transition-all ${
                   theme === t.id
-                    ? 'bg-cyan-500 text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-zinc-800 text-white shadow-sm'
+                    : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 {t.label}
