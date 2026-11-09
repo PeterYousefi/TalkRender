@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Mic, MicOff, Palette, Layers, Radio, Square, RotateCcw } from 'lucide-react';
+import { Mic, MicOff, Palette, Layers, Radio, Square, RotateCcw, Sparkles } from 'lucide-react';
 import type { WorkspaceTheme } from '@/types/workspace';
 import type { BosonSessionStatus } from '@/types/boson';
 import type { LiveKitConnectionStatus } from '@/types/livekit';
@@ -17,6 +17,8 @@ export interface WorkspaceHeaderProps {
   onToggleAutoRollback: () => void;
   onOpenTemplates: () => void;
   onEmergencyStop?: () => void;
+  viewMode?: 'studio' | 'inspector';
+  onToggleViewMode?: () => void;
   className?: string;
 }
 
@@ -37,6 +39,8 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
   onToggleAutoRollback,
   onOpenTemplates,
   onEmergencyStop,
+  viewMode = 'studio',
+  onToggleViewMode,
   className = '',
 }) => {
   return (
@@ -87,6 +91,26 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
 
       {/* Action Controls & Toggles */}
       <div className="flex items-center gap-2">
+        {/* Studio / Dev Mode Switcher */}
+        {onToggleViewMode && (
+          <button
+            type="button"
+            data-testid="toggle-view-mode-btn"
+            onClick={onToggleViewMode}
+            className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold border transition-all ${
+              viewMode === 'studio'
+                ? 'bg-cyan-950/90 text-cyan-300 border-cyan-600/70 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
+                : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+            }`}
+            title="Switch between Visual Canvas Studio and Developer Inspector"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
+            <span className="hidden sm:inline">
+              {viewMode === 'studio' ? '🎨 Studio Mode' : '🛠️ Dev Mode'}
+            </span>
+          </button>
+        )}
+
         {/* Template Library Button */}
         <button
           type="button"

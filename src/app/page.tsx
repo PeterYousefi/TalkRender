@@ -30,6 +30,7 @@ import { Wrench, Code2, Activity, Layers, X } from 'lucide-react';
 
 export default function WorkspacePage() {
   const [theme, setTheme] = useState<WorkspaceTheme>('cyberpunk');
+  const [viewMode, setViewMode] = useState<'studio' | 'inspector'>('inspector');
   const [activeInspectorTab, setActiveInspectorTab] = useState<InspectorTab>('tools');
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [autoRollback, setAutoRollback] = useState(true);
@@ -264,6 +265,8 @@ export default function WorkspacePage() {
         autoRollback={autoRollback}
         onToggleAutoRollback={() => setAutoRollback(!autoRollback)}
         onOpenTemplates={() => setIsTemplateModalOpen(true)}
+        viewMode={viewMode}
+        onToggleViewMode={() => setViewMode((prev) => (prev === 'studio' ? 'inspector' : 'studio'))}
         onEmergencyStop={() => {
           interruptBoson();
           triggerManualInterrupt();
@@ -272,6 +275,13 @@ export default function WorkspacePage() {
 
       {/* Main Split-Screen Layout */}
       <SplitScreenLayout
+        key={viewMode}
+        initialPanels={{
+          avatarPanel: true,
+          canvasPanel: true,
+          inspectorPanel: viewMode === 'inspector',
+          terminalPanel: viewMode === 'inspector',
+        }}
         // Left Panel: Co-Pilot Talking Avatar
         leftPanel={
           <div className="flex flex-col gap-3">
