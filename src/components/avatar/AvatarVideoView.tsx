@@ -47,7 +47,7 @@ export function AvatarVideoView({
   return (
     <div
       data-testid="avatar-video-view"
-      className={`relative flex flex-col items-center justify-center w-full h-full overflow-hidden rounded-xl bg-surface-950 border border-surface-700/80 shadow-2xl ${className}`}
+      className={`relative flex flex-col items-center justify-center w-full h-full overflow-hidden rounded-xl bg-zinc-950/70 border border-white/[0.06] shadow-xl ${className}`}
     >
       {track ? (
         /* WebRTC Avatar Live Stream */

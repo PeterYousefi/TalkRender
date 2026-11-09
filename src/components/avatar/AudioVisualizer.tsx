@@ -32,10 +32,10 @@ export function AudioVisualizer({
   return (
     <div
       data-testid="audio-visualizer"
-      className={`flex flex-col items-center gap-1.5 p-2 rounded-lg bg-surface-900/80 backdrop-blur border border-surface-700/60 ${className}`}
+      className={`flex flex-col items-center gap-2 p-3 rounded-xl bg-zinc-950/70 backdrop-blur-xl border border-white/[0.06] shadow-lg ${className}`}
     >
       {/* Bars container */}
-      <div className="flex items-end justify-center gap-1 h-10 w-full px-2">
+      <div className="flex items-end justify-center gap-1.5 h-10 w-full px-2">
         {bars.map((val, idx) => {
           const heightPercent = Math.max(10, Math.min(100, Math.round(val * 100)));
           const isHigh = val > 0.6;
@@ -44,12 +44,12 @@ export function AudioVisualizer({
               key={idx}
               data-testid={`visualizer-bar-${idx}`}
               style={{ height: `${heightPercent}%` }}
-              className={`w-1.5 rounded-full transition-all duration-75 ${
+              className={`w-1 rounded-full transition-all duration-75 ${
                 isSpeaking
                   ? isHigh
                     ? 'bg-neon-magenta shadow-[0_0_8px_#ff007f]'
-                    : 'bg-neon-cyan shadow-[0_0_6px_#00f3ff]'
-                  : 'bg-zinc-700/60'
+                    : 'bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.6)]'
+                  : 'bg-zinc-800'
               }`}
             />
           );
@@ -63,13 +63,15 @@ export function AudioVisualizer({
             data-testid="speaking-indicator"
             className={`w-1.5 h-1.5 rounded-full ${
               isSpeaking
-                ? 'bg-neon-emerald shadow-[0_0_6px_#00ff66] animate-pulse'
-                : 'bg-zinc-600'
+                ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)] animate-pulse'
+                : 'bg-zinc-700'
             }`}
           />
-          <span>{isSpeaking ? 'VOICE DETECTED' : 'STANDBY'}</span>
+          <span className="tracking-wider">{isSpeaking ? 'VOICE DETECTED' : 'STANDBY'}</span>
         </div>
-        <span data-testid="dbfs-readout">{dbfs > -100 ? `${dbfs.toFixed(0)} dB` : '-INF'}</span>
+        <span data-testid="dbfs-readout" className="text-zinc-500 font-mono">
+          {dbfs > -100 ? `${dbfs.toFixed(0)} dB` : '-INF'}
+        </span>
       </div>
     </div>
   );
