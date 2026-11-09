@@ -48,20 +48,20 @@ export const SplitScreenLayout: React.FC<SplitScreenLayoutProps> = ({
   return (
     <div
       data-testid="split-screen-layout"
-      className={`relative flex h-full w-full flex-1 overflow-hidden bg-slate-950 ${className}`}
+      className={`relative flex h-full w-full flex-1 overflow-hidden bg-zinc-950 font-sans ${className}`}
     >
       {/* Left Avatar Co-Pilot Panel */}
       {panels.avatarPanel ? (
         <aside
           data-testid="left-avatar-panel"
-          className="relative flex w-80 shrink-0 flex-col border-r border-slate-800 bg-slate-950/80 p-3 overflow-y-auto"
+          className="relative flex w-80 shrink-0 flex-col border-r border-white/[0.06] bg-zinc-950/80 p-3.5 overflow-y-auto backdrop-blur-xl"
         >
-          <div className="absolute right-2 top-2 z-10">
+          <div className="absolute right-3 top-3 z-10">
             <button
               type="button"
               data-testid="collapse-left-panel-btn"
               onClick={() => togglePanel('avatarPanel')}
-              className="rounded p-1 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+              className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800/80 hover:text-white transition-all"
               title="Collapse Co-Pilot Panel"
             >
               <PanelLeftClose className="h-4 w-4" />
@@ -70,17 +70,17 @@ export const SplitScreenLayout: React.FC<SplitScreenLayoutProps> = ({
           {leftPanel}
         </aside>
       ) : (
-        <div className="flex h-full w-10 shrink-0 flex-col items-center border-r border-slate-800 bg-slate-950 py-3">
+        <div className="flex h-full w-10 shrink-0 flex-col items-center border-r border-white/[0.06] bg-zinc-950/90 py-3 backdrop-blur-xl">
           <button
             type="button"
             data-testid="expand-left-panel-btn"
             onClick={() => togglePanel('avatarPanel')}
-            className="rounded p-1.5 text-slate-400 hover:bg-slate-800 hover:text-cyan-400 transition-colors"
+            className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800/80 hover:text-cyan-400 transition-all"
             title="Expand Co-Pilot Panel"
           >
             <PanelLeftOpen className="h-4 w-4" />
           </button>
-          <span className="mt-8 -rotate-90 whitespace-nowrap text-[10px] font-bold tracking-widest text-slate-500 uppercase font-mono">
+          <span className="mt-8 -rotate-90 whitespace-nowrap text-[10px] font-semibold tracking-widest text-zinc-500 uppercase font-mono">
             CO-PILOT
           </span>
         </div>
@@ -89,7 +89,7 @@ export const SplitScreenLayout: React.FC<SplitScreenLayoutProps> = ({
       {/* Center Interactive Canvas Panel */}
       <main
         data-testid="center-canvas-panel"
-        className="relative flex flex-1 flex-col overflow-hidden bg-slate-900/40"
+        className="relative flex flex-1 flex-col overflow-hidden bg-zinc-900/10"
       >
         <div className="relative flex-1 overflow-hidden flex flex-col">
           {centerPanel}
@@ -97,16 +97,16 @@ export const SplitScreenLayout: React.FC<SplitScreenLayoutProps> = ({
 
         {/* Bottom Terminal Drawer */}
         {terminalPanel && (
-          <div className="border-t border-slate-800 bg-slate-950">
-            <div className="flex items-center justify-between px-3 py-1 bg-slate-900/60 border-b border-slate-800/60">
-              <span className="text-[10px] font-mono font-bold tracking-wider text-slate-400 uppercase">
-                Terminal Drawer
+          <div className="border-t border-white/[0.06] bg-zinc-950/90 backdrop-blur-xl">
+            <div className="flex items-center justify-between px-4 py-1.5 bg-zinc-950/70 border-b border-white/[0.04]">
+              <span className="text-[10px] font-mono font-medium tracking-wider text-zinc-400 uppercase">
+                Terminal Output
               </span>
               <button
                 type="button"
                 data-testid="toggle-terminal-drawer-btn"
                 onClick={() => togglePanel('terminalPanel')}
-                className="rounded p-0.5 text-slate-400 hover:bg-slate-800 hover:text-white"
+                className="rounded-md p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white transition-all"
               >
                 {panels.terminalPanel ? (
                   <ChevronDown className="h-3.5 w-3.5" />
@@ -128,14 +128,14 @@ export const SplitScreenLayout: React.FC<SplitScreenLayoutProps> = ({
       {panels.inspectorPanel ? (
         <aside
           data-testid="right-inspector-panel"
-          className="relative flex w-96 shrink-0 flex-col border-l border-slate-800 bg-slate-950/80 p-3 overflow-y-auto"
+          className="relative flex w-96 shrink-0 flex-col border-l border-white/[0.06] bg-zinc-950/80 p-3.5 overflow-y-auto backdrop-blur-xl"
         >
-          <div className="absolute left-2 top-2 z-10">
+          <div className="absolute left-3 top-3 z-10">
             <button
               type="button"
               data-testid="collapse-right-panel-btn"
               onClick={() => togglePanel('inspectorPanel')}
-              className="rounded p-1 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+              className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800/80 hover:text-white transition-all"
               title="Collapse Inspector Panel"
             >
               <PanelRightClose className="h-4 w-4" />
@@ -144,17 +144,17 @@ export const SplitScreenLayout: React.FC<SplitScreenLayoutProps> = ({
           {rightPanel}
         </aside>
       ) : (
-        <div className="flex h-full w-10 shrink-0 flex-col items-center border-l border-slate-800 bg-slate-950 py-3">
+        <div className="flex h-full w-10 shrink-0 flex-col items-center border-l border-white/[0.06] bg-zinc-950/90 py-3 backdrop-blur-xl">
           <button
             type="button"
             data-testid="expand-right-panel-btn"
             onClick={() => togglePanel('inspectorPanel')}
-            className="rounded p-1.5 text-slate-400 hover:bg-slate-800 hover:text-cyan-400 transition-colors"
+            className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800/80 hover:text-cyan-400 transition-all"
             title="Expand Inspector Panel"
           >
             <PanelRightOpen className="h-4 w-4" />
           </button>
-          <span className="mt-8 -rotate-90 whitespace-nowrap text-[10px] font-bold tracking-widest text-slate-500 uppercase font-mono">
+          <span className="mt-8 -rotate-90 whitespace-nowrap text-[10px] font-semibold tracking-widest text-zinc-500 uppercase font-mono">
             INSPECTOR
           </span>
         </div>
