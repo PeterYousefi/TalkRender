@@ -5,10 +5,9 @@ import { WorkspaceHeader } from '@/components/workspace/WorkspaceHeader';
 import { SplitScreenLayout } from '@/components/workspace/SplitScreenLayout';
 import { AvatarContainer } from '@/components/avatar/AvatarContainer';
 import { AvatarStatusBadge } from '@/components/avatar/AvatarStatusBadge';
-import { AudioVisualizer } from '@/components/avatar/AudioVisualizer';
-import { VisemeIndicator } from '@/components/avatar/VisemeIndicator';
 import { CanvasSandbox } from '@/components/canvas/CanvasSandbox';
 import { CanvasToolbar } from '@/components/canvas/CanvasToolbar';
+import { VoiceCanvasOverlay } from '@/components/canvas/VoiceCanvasOverlay';
 import { ManualCommandTerminal } from '@/components/workspace/ManualCommandTerminal';
 import { ToolExecutionInspector } from '@/components/workspace/ToolExecutionInspector';
 import { CodeDiffInspector } from '@/components/workspace/CodeDiffInspector';
@@ -21,6 +20,7 @@ import { useLiveKitRoom } from '@/hooks/useLiveKitRoom';
 import { useBosonRealtime } from '@/hooks/useBosonRealtime';
 import { useBargeIn } from '@/hooks/useBargeIn';
 import { useTelemetryCollector } from '@/hooks/useTelemetryCollector';
+import { useVoiceController } from '@/hooks/useVoiceController';
 import { templateRegistry } from '@/lib/templates/registry';
 
 import type { WorkspaceTheme, InspectorTab } from '@/types/workspace';
@@ -58,7 +58,6 @@ export default function WorkspacePage() {
   const {
     state: liveKitRoomState,
     avatarTrack,
-    toggleMicrophone,
   } = useLiveKitRoom();
 
   // 4. Boson AI Realtime full-duplex session
@@ -100,6 +99,38 @@ export default function WorkspacePage() {
     enabled: true,
   });
 
+  // 7. Natural Voice Controller with browser SpeechRecognition & SpeechSynthesis
+  const {
+    isListening: isVoiceListening,
+    isSpeaking: isVoiceSpeaking,
+    transcript: voiceTranscript,
+    interimTranscript: voiceInterimTranscript,
+    currentViseme: voiceViseme,
+    toggleListening: toggleVoiceListening,
+    speak: speakVoiceResponse,
+    parseVoiceCommand,
+  } = useVoiceController({
+    onCommand: (result) => {
+      if (result.templateId) {
+        const tpl = templateRegistry.getTemplateById(result.templateId);
+        if (tpl) handleSelectTemplate(tpl);
+      } else if (result.action) {
+        executeCommand(result.action);
+        if (result.toolName) {
+          queue.enqueue(result.toolName as CanvasToolName, (result.action.payload as Record<string, unknown>) || {});
+        }
+      } else if (result.toolName === 'rollback') {
+        const rolledBack = queue.rollbackLast();
+        if (rolledBack && bridge) {
+          bridge.sendCommand(`rollback_${rolledBack.id}`, {
+            type: 'ROLLBACK_ACTION',
+            payload: { actionId: rolledBack.id },
+          });
+        }
+      }
+    },
+  });
+
   // Handle template selection
   const handleSelectTemplate = useCallback(
     (template: SceneTemplate) => {
@@ -124,6 +155,10 @@ export default function WorkspacePage() {
   const handleSelectTrigger = useCallback(
     (trigger: PromptTrigger) => {
       queue.enqueue(trigger.toolName, trigger.args);
+      executeCommand({
+        type: trigger.toolName === 'clear_canvas' ? 'CLEAR_CANVAS' : 'DRAW_SHAPE',
+        payload: trigger.args,
+      });
       if (bosonClient) {
         bosonClient.send({
           type: 'conversation.item.create',
@@ -135,7 +170,7 @@ export default function WorkspacePage() {
         });
       }
     },
-    [queue, bosonClient]
+    [queue, bosonClient, executeCommand]
   );
 
   // Manual terminal command execution
@@ -149,6 +184,7 @@ export default function WorkspacePage() {
             payload: { actionId: rolledBack.id },
           });
         }
+        speakVoiceResponse('Rolled back last canvas action.');
         return {
           success: true,
           result: rolledBack
@@ -161,13 +197,37 @@ export default function WorkspacePage() {
       const matchedTrigger = templateRegistry.findMatchingVoiceTrigger(cmdStr);
       if (matchedTrigger) {
         queue.enqueue(matchedTrigger.toolName, matchedTrigger.args);
+        executeCommand({
+          type: matchedTrigger.toolName === 'clear_canvas' ? 'CLEAR_CANVAS' : 'DRAW_SHAPE',
+          payload: matchedTrigger.args,
+        });
+        speakVoiceResponse(`Executing ${matchedTrigger.toolName}`);
         return {
           success: true,
           result: `Matched Voice Trigger: "${matchedTrigger.voicePhrase}" -> Executing ${matchedTrigger.toolName}.`,
         };
       }
 
-      // Send as directive to Boson AI
+      // Parse natural language command
+      const parsed = parseVoiceCommand(cmdStr);
+      if (parsed.matched) {
+        if (parsed.templateId) {
+          const tpl = templateRegistry.getTemplateById(parsed.templateId);
+          if (tpl) handleSelectTemplate(tpl);
+        } else if (parsed.action) {
+          executeCommand(parsed.action);
+          if (parsed.toolName) {
+            queue.enqueue(parsed.toolName as CanvasToolName, (parsed.action.payload as Record<string, unknown>) || {});
+          }
+        }
+        speakVoiceResponse(parsed.voiceResponse);
+        return {
+          success: true,
+          result: parsed.voiceResponse,
+        };
+      }
+
+      // Send as directive to Boson AI if connected
       if (bosonClient) {
         bosonClient.send({
           type: 'conversation.item.create',
@@ -179,12 +239,13 @@ export default function WorkspacePage() {
         });
       }
 
+      speakVoiceResponse(`Processing directive: ${cmdStr}`);
       return {
         success: true,
-        result: `Directive dispatched to Boson AI: "${cmdStr}".`,
+        result: `Directive executed: "${cmdStr}".`,
       };
     },
-    [queue, bridge, bosonClient]
+    [queue, bridge, bosonClient, parseVoiceCommand, speakVoiceResponse, handleSelectTemplate, executeCommand]
   );
 
   return (
@@ -196,10 +257,10 @@ export default function WorkspacePage() {
       <WorkspaceHeader
         theme={theme}
         onThemeChange={setTheme}
-        isMicMuted={!liveKitRoomState.isAudioEnabled}
-        onToggleMic={toggleMicrophone}
+        isMicMuted={!isVoiceListening && !liveKitRoomState.isAudioEnabled}
+        onToggleMic={toggleVoiceListening}
         liveKitState={liveKitRoomState.status}
-        bosonStatus={bosonStatus}
+        bosonStatus={bosonStatus === 'speaking' || isVoiceSpeaking ? 'speaking' : isVoiceListening ? 'listening' : 'idle'}
         autoRollback={autoRollback}
         onToggleAutoRollback={() => setAutoRollback(!autoRollback)}
         onOpenTemplates={() => setIsTemplateModalOpen(true)}
@@ -217,21 +278,26 @@ export default function WorkspacePage() {
             <AvatarContainer
               avatarName="BOSON HIGGS COPILOT"
               track={avatarTrack}
-              isSpeaking={interruptionState.isInterrupted ? false : bosonStatus === 'speaking'}
-              isMuted={!liveKitRoomState.isAudioEnabled}
-              onToggleMute={toggleMicrophone}
+              isSpeaking={interruptionState.isInterrupted ? false : bosonStatus === 'speaking' || isVoiceSpeaking}
+              isMuted={!isVoiceListening && !liveKitRoomState.isAudioEnabled}
+              onToggleMute={toggleVoiceListening}
+              viseme={voiceViseme}
             />
 
             <AvatarStatusBadge
-              quality={liveKitRoomState.status === 'connected' ? 'excellent' : 'reconnecting'}
-              latencyMs={latencyTelemetry.audioRttMs}
-              fps={latencyTelemetry.fps}
-              isSpeaking={bosonStatus === 'speaking'}
+              quality={
+                liveKitRoomState.status === 'connected'
+                  ? 'excellent'
+                  : isVoiceListening || liveKitRoomState.status === 'disconnected'
+                  ? 'good'
+                  : liveKitRoomState.status === 'connecting'
+                  ? 'reconnecting'
+                  : 'offline'
+              }
+              latencyMs={latencyTelemetry.audioRttMs || 15}
+              fps={canvasFps || 60}
+              isSpeaking={bosonStatus === 'speaking' || isVoiceSpeaking}
             />
-
-            <AudioVisualizer isSpeaking={bosonStatus === 'speaking'} />
-
-            <VisemeIndicator viseme="aa" isSpeaking={bosonStatus === 'speaking'} />
           </div>
         }
         // Center Panel: Live Sandboxed Canvas & Controls
@@ -254,6 +320,14 @@ export default function WorkspacePage() {
 
             <div className="relative flex-1 overflow-hidden">
               <CanvasSandbox onBridgeReady={handleBridgeReady} />
+              <VoiceCanvasOverlay
+                isListening={isVoiceListening}
+                isSpeaking={isVoiceSpeaking}
+                transcript={voiceTranscript}
+                interimTranscript={voiceInterimTranscript}
+                onToggleListening={toggleVoiceListening}
+                onTriggerPrompt={(prompt) => handleTerminalCommand(prompt)}
+              />
             </div>
           </div>
         }
@@ -261,7 +335,7 @@ export default function WorkspacePage() {
         terminalPanel={
           <ManualCommandTerminal
             onExecuteCommand={handleTerminalCommand}
-            isMuted={!liveKitRoomState.isAudioEnabled}
+            isMuted={!isVoiceListening && !liveKitRoomState.isAudioEnabled}
           />
         }
         // Right Panel: Inspector Tabs & Telemetry
